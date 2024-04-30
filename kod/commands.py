@@ -1,7 +1,20 @@
 import oracledb
 import gui
 import hashlib
+import tkinter as tk
 from tkinter import messagebox as MessageBox
+import pandas as pd
+
+# Connection to database
+def connect():
+    matt = {"user": "MATT", "pw": "oracle" "matt"}
+    kamilla = {"user": "system", "pw": "oracle"}
+    currentU = kamilla
+    # A user-t meg a jelszo-t sajátra köll átállítani hogy működjön
+    dsn = oracledb.makedsn("localhost", 1521, service_name="xe")
+    db = oracledb.connect(user=currentU["user"], password=currentU["pw"], dsn=dsn)
+
+    return db
 
 
 def open_admin_options():
@@ -17,12 +30,18 @@ def login():
     jelszo = jelszo_hash
     print(jelszo)
 
+
+
     #A user-t meg a jelszo-t sajátra köll átállítani hogy működjön
-    dsn = oracledb.makedsn("localhost", 1521, service_name="xe")
-    db = oracledb.connect(user="MATT", password="matt", dsn=dsn)
+    #dsn = oracledb.makedsn("localhost", 1521, service_name="xe")
+    #db = oracledb.connect(user=kamilla["user"], password=kamilla["pw"], dsn=dsn)
+
+    # use connect function instead having like a gazzilion of db open lines copied
+    db = connect()
 
     cursor = db.cursor()
     print("cursor pipa")
+
     try:
         cursor.execute("SELECT * FROM felhasznalok WHERE email = :s", (email,))
         print("execute is done")
@@ -71,9 +90,10 @@ def register():
     gui.password_confirm_entry.delete(0, 'end')
     jelszo_megerosites = ""
 
-    dsn = oracledb.makedsn("localhost", 1521, service_name="xe")
-    db = oracledb.connect(user="MATT", password="matt", dsn=dsn)
-    
+    ##dsn = oracledb.makedsn("localhost", 1521, service_name="xe")
+    #db = oracledb.connect(user="MATT", password="matt", dsn=dsn)
+    db = connect()
+
     cursor = db.cursor()
 
     try:
@@ -89,3 +109,7 @@ def register():
         db.rollback()
 
     db.close()
+
+
+# K tries things sectiion
+

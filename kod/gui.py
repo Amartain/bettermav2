@@ -1,7 +1,8 @@
 import tkinter as tk
 import oracledb
 import commands
-
+import pandas as pd
+from tkinter import messagebox as MessageBox
 root = tk.Tk()
 
 def open_start():
@@ -10,21 +11,40 @@ def open_start():
     root.configure(bg='#99f')
     try:
         # A user-t meg a jelszo-t sajátra köll átállítani hogy működjön
-        dsn = oracledb.makedsn("localhost", 1521, service_name="xe")
-        db = oracledb.connect(user="MATT", password="matt", dsn=dsn)
-        cursor = db.cursor()
-        cursor.execute("SELECT * FROM felhasznalok")
-        result = cursor.fetchall()
-        print("Result:", result)
-        if(result):
-            connectionLabel = tk.Label(root, text="Connection established", bg="#99f")
-            connectionLabel.place(x=50, y=50)
+        #dsn = oracledb.makedsn("localhost", 1521, service_name="xe")
+        #db = oracledb.connect(user="MATT", password="matt", dsn=dsn)
 
-            mainButton = tk.Button(root, text="Main window", command=main_window, bg="#99f", fg="white")
-            mainButton.place(x=50, y=150)
-        else:
+        matt = {"user": "MATT", "pw": "oracle" "matt"}
+        kamilla = {"user": "system", "pw": "oracle"}
+        currentU = kamilla
+        # A user-t meg a jelszo-t sajátra köll átállítani hogy működjön
+        dsn = oracledb.makedsn("localhost", 1521, service_name="xe")
+        db = oracledb.connect(user=currentU["user"], password=currentU["pw"], dsn=dsn)
+        #db = commands.connect()
+
+        # with pandas try, columns displayed but no rows
+        """chunk_size = 10  # Adjust as needed
+        query = "SELECT * FROM felhasznalok"
+        result_chunks = pd.read_sql(query, db, chunksize=chunk_size)
+        for chunk in result_chunks:
+            # Process each chunk of data
+            print(chunk)"""
+
+
+
+        cursor = db.cursor()
+        cursor.execute("SELECT * FROM varosok")
+        result = cursor.fetchone()
+        print("Result:", result)
+        #if(result):
+        connectionLabel = tk.Label(root, text="Connection established", bg="#99f")
+        connectionLabel.place(x=50, y=50)
+
+        mainButton = tk.Button(root, text="Main window", command=main_window, bg="#99f", fg="white")
+        mainButton.place(x=50, y=150)
+        """else:
             errorLabel = tk.Label(root, text="Oops! Something ain't right", fg="red")
-            errorLabel.pack()
+            errorLabel.pack()"""
         cursor.close()
         db.close()
         root.mainloop()
@@ -78,6 +98,9 @@ def open_login():
 
 
 def open_registration():
+
+
+
     global reg_window
     reg_window = tk.Toplevel(root)
     reg_window.geometry("800x600")
@@ -125,4 +148,62 @@ def open_registration():
 
 
 def open_dolgozo():
-    return None
+    #TODO: build this method actually this is just a test
+   open_AddCity()
+
+
+def open_AddCity    ():
+    tk.Label(root,text='Állomás neve')
+    nevE = tk.Entry(root)
+    tk.Label(root,text='Irányítószám')
+    irszE = tk.Entry(root)
+    tk.Label(root,text='Régió')
+    regioE = tk.Entry(root)
+    tk.Label(root, text='Orszag')
+    orszagE = tk.Entry(root)
+
+    nevE.pack()
+    irszE.pack()
+    regioE.pack()
+    orszagE.pack()
+
+
+
+    def insertCity():
+
+        nev = nevE.get()
+        irsz = irszE.get()
+        regio = regioE.get()
+        orszag = orszagE.get()
+        db = commands.connect()
+
+        print(nev)
+
+        if not (irszE and nevE and regioE and orszagE):
+            MessageBox.showinfo("Hiba", "Minden mező kitöltése kötelező!")
+            return
+
+        cursor = db.cursor()
+
+        try:
+            cursor.execute(
+                "INSERT INTO Varosok (irsz, nev, regio, orszag) VALUES (:s, :s, :s, :s)",
+                (irsz, nev, regio, orszag))
+            db.commit()
+            MessageBox.showinfo("Siker", "Sikeres regisztráció!")
+        except oracledb.Error as err:
+            MessageBox.showinfo("Hiba", "Hiba történt a regisztráció során: {}".format(err))
+            db.rollback()
+
+        db.close()
+
+    okAE = tk.Button(root,text='INSERT', command=insertCity)
+    okAE.pack()
+
+
+
+
+
+
+
+
