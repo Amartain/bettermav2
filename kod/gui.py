@@ -49,6 +49,7 @@ def open_start():
 
         if(result):
             MessageBox.showinfo("Siker", "Sikeres csatlakozás az adatbázishoz!")
+            tk.Button(text="Kezdőlap", command=open_login).pack(expand=True)
         else:
             MessageBox.showinfo("Hiba", "Sajnos nem sikerült csatlakozni az adatbázishoz, kérlek próbáld újra!")
         cursor.close()
@@ -75,9 +76,7 @@ def open_login():
     for widget in root.winfo_children():
         widget.destroy()
 
-    root.geometry("800x600")
-    root.title("Menetrend")
-    root.configure(bg='black')
+
 
     login_lable = tk.Label(root, text='Belépés', font=('bold', 20), bg='black', fg='white')
     login_lable.place(x=200, y=100)
@@ -158,8 +157,7 @@ def open_registration():
     tipus.set("Felnőtt")
 
     tk.Label(reg_window, text='Utastípus', font=('bold', 12), bg='black', fg='white').pack()
-    menu = OptionMenu(reg_window, tipus, 'Felnőtt', 'Tanuló', 'Gyermek', 'Nyugdíjas', 'Kedvezményes', 'Admin')
-    menu.pack(expand=True)
+    OptionMenu(reg_window, tipus, 'Felnőtt', 'Tanuló', 'Gyermek', 'Nyugdíjas', 'Kedvezményes', 'Admin').pack(expand=True)
 
 
 
@@ -174,11 +172,14 @@ def open_registration():
 
 
 def open_dolgozo():
+    pass
+
+
+def open_admin_options():
     for widget in root.winfo_children():
         widget.destroy()
     #TODO: build this method actually this is just a test
     tk.Button(root, text="Város hozzáadása", width=20, height=2, command=addCity).pack(expand=True)
-
 
 
 def addCity    ():

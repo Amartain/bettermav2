@@ -17,8 +17,7 @@ def connect():
     return db
 
 
-def open_admin_options():
-    pass
+
 
 
 def login():
@@ -54,10 +53,12 @@ def login():
         else:
             global Email
             Email = result[0]
-            if result[1] == 'admin':
+            print(result[0])
+            print(result[1])
+            if result[1] == 'Ada Min':
                 MessageBox.showinfo("Info", "Üdvözöljük {} adminunk!".format(result[1]))
                 global felhasznalo_email
-                open_admin_options()
+                gui.open_admin_options()
             else:
                 MessageBox.showinfo("Info", "Üdvözöljük {}!".format(result[1]))
                 gui.open_dolgozo()
