@@ -30,8 +30,6 @@ def login():
     jelszo = jelszo_hash
     print(jelszo)
 
-
-
     #A user-t meg a jelszo-t sajátra köll átállítani hogy működjön
     #dsn = oracledb.makedsn("localhost", 1521, service_name="xe")
     #db = oracledb.connect(user=kamilla["user"], password=kamilla["pw"], dsn=dsn)
@@ -74,7 +72,7 @@ def register():
     jelszo = gui.password_entry.get()
     jelszo_megerosites = gui.password_confirm_entry.get()
     email = gui.email_entry.get()
-    tipus = gui.tipus_entry.get()
+    tipus = gui.tipus.get()
 
     if not (nev and jelszo and email):
         MessageBox.showinfo("Hiba", "Minden mező kitöltése kötelező!")

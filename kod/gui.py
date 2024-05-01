@@ -1,14 +1,20 @@
 import tkinter as tk
+from doctest import master
+
 import oracledb
 import commands
 import pandas as pd
 from tkinter import messagebox as MessageBox
+import displayData as dd
+from tkinter import *
+
+
 root = tk.Tk()
 
 def open_start():
     root.geometry("800x600")
     root.title("Menetrend")
-    root.configure(bg='#99f')
+    root.configure(bg='black')
     try:
         # A user-t meg a jelszo-t sajátra köll átállítani hogy működjön
         #dsn = oracledb.makedsn("localhost", 1521, service_name="xe")
@@ -36,15 +42,15 @@ def open_start():
         cursor.execute("SELECT * FROM varosok")
         result = cursor.fetchone()
         print("Result:", result)
-        #if(result):
-        connectionLabel = tk.Label(root, text="Connection established", bg="#99f")
-        connectionLabel.place(x=50, y=50)
+        print(type(result))
+        data = list(result)
+        rowCount = cursor.rowcount
+        colCount = 4
 
-        mainButton = tk.Button(root, text="Main window", command=main_window, bg="#99f", fg="white")
-        mainButton.place(x=50, y=150)
-        """else:
-            errorLabel = tk.Label(root, text="Oops! Something ain't right", fg="red")
-            errorLabel.pack()"""
+        if(result):
+            MessageBox.showinfo("Siker", "Sikeres csatlakozás az adatbázishoz!")
+        else:
+            MessageBox.showinfo("Hiba", "Sajnos nem sikerült csatlakozni az adatbázishoz, kérlek próbáld újra!")
         cursor.close()
         db.close()
         root.mainloop()
@@ -71,7 +77,7 @@ def open_login():
 
     root.geometry("800x600")
     root.title("Menetrend")
-    root.configure(bg='#99f')
+    root.configure(bg='black')
 
     login_lable = tk.Label(root, text='Belépés', font=('bold', 20), bg='black', fg='white')
     login_lable.place(x=200, y=100)
@@ -96,6 +102,9 @@ def open_login():
     register_button = tk.Button(root, text='Regisztráció', width=20, height=2, command=open_registration)
     register_button.place(x=350, y=300)
 
+    search_button = tk.Button(root, text="Menetrend keresés", width=20, height=2, command=open_Menetrendek)
+    search_button.place(x=250, y=400)
+
 
 def open_registration():
 
@@ -105,68 +114,90 @@ def open_registration():
     reg_window = tk.Toplevel(root)
     reg_window.geometry("800x600")
     reg_window.title("Regisztráció")
-    reg_window.configure(bg='#99f')
+    reg_window.configure(bg='black')
 
-    welcome_label = tk.Label(reg_window, text='Regisztráció', font=('bold', 20), bg='black', fg='white')
-    welcome_label.place(x=100, y=100)
+    tk.Label(reg_window, text='Regisztráció', font=('bold', 20), bg='black', fg='white').pack()
+    #welcome_label.place(x=100, y=100)
 
-    name_label = tk.Label(reg_window, text='Név', font=('bold', 12), bg='black', fg='white')
-    name_label.place(x=200, y=200)
+    tk.Label(reg_window, text='Név', font=('bold', 12), bg='black', fg='white').pack()
+    #name_label.place(x=200, y=200)
     global name_entry
     name_entry = tk.Entry(reg_window)
-    name_entry.place(x=300, y=200)
+    #name_entry.place(x=300, y=200)
+    name_entry.pack(expand=True)
 
-    password_label = tk.Label(reg_window, text='Jelszó', font=('bold', 12), bg='black', fg='white')
-    password_label.place(x=200, y=250)
+    tk.Label(reg_window, text='Jelszó', font=('bold', 12), bg='black', fg='white').pack()
+    #password_label.place(x=200, y=250)
     global password_entry
     password_entry = tk.Entry(reg_window, show='*')
-    password_entry.place(x=300, y=250)
+    #password_entry.place(x=300, y=250)
+    password_entry.pack(expand=True)
 
-    password_confirm_label = tk.Label(reg_window, text='Jelszó megerősítése', font=('bold', 12), bg='black', fg='white')
-    password_confirm_label.place(x=150, y=300)
+    tk.Label(reg_window, text='Jelszó megerősítése', font=('bold', 12), bg='black', fg='white').pack()
+    #password_confirm_label.place(x=150, y=300)
     global password_confirm_entry
     password_confirm_entry = tk.Entry(reg_window, show='*')
-    password_confirm_entry.place(x=300, y=300)
+    #password_confirm_entry.place(x=300, y=300)
+    password_confirm_entry.pack()
 
-    email_label = tk.Label(reg_window, text='E-mail', font=('bold', 12), bg='black', fg='white')
-    email_label.place(x=200, y=350)
+    tk.Label(reg_window, text='E-mail', font=('bold', 12), bg='black', fg='white').pack()
+    #email_label.place(x=200, y=350)
     global email_entry
     email_entry = tk.Entry(reg_window)
-    email_entry.place(x=300, y=350)
+    #email_entry.place(x=300, y=350)
+    email_entry.pack(expand=True)
 
-    tipus_label = tk.Label(reg_window, text='Utastípus', font=('bold', 12), bg='black', fg='white')
+    """tipus_label = tk.Label(reg_window, text='Utastípus', font=('bold', 12), bg='black', fg='white')
     tipus_label.place(x=200, y=400)
     global tipus_entry
     tipus_entry = tk.Entry(reg_window)
-    tipus_entry.place(x=300, y=400)
+    tipus_entry.place(x=300, y=400)"""
 
-    login_button = tk.Button(reg_window, text='Belépés', width=20, height=2, command=reg_window.destroy)
-    login_button.place(x=200, y=450)
+    global tipus
+    tipus = StringVar(reg_window)
+    tipus.set("Felnőtt")
 
-    registrate_button = tk.Button(reg_window, text='Regisztráció', width=20, height=2, command=commands.register)
-    registrate_button.place(x=350, y=450)
+    tk.Label(reg_window, text='Utastípus', font=('bold', 12), bg='black', fg='white').pack()
+    menu = OptionMenu(reg_window, tipus, 'Felnőtt', 'Tanuló', 'Gyermek', 'Nyugdíjas', 'Kedvezményes', 'Admin')
+    menu.pack(expand=True)
+
+
+
+
+
+
+    tk.Button(reg_window, text='Regisztráció', width=20, height=2, command=commands.register).pack(expand=True)
+    #registrate_button.place(x=350, y=450)
+
+    tk.Button(reg_window, text='Belépés', width=20, height=2, command=reg_window.destroy).pack()
+    # login_button.place(x=200, y=450)
 
 
 def open_dolgozo():
+    for widget in root.winfo_children():
+        widget.destroy()
     #TODO: build this method actually this is just a test
-   open_AddCity()
+    tk.Button(root, text="Város hozzáadása", width=20, height=2, command=addCity).pack(expand=True)
 
 
-def open_AddCity    ():
-    tk.Label(root,text='Állomás neve')
+
+def addCity    ():
+    for widget in root.winfo_children():
+        widget.destroy()
+
+
+    tk.Label(root,text='Állomás neve').pack()
     nevE = tk.Entry(root)
-    tk.Label(root,text='Irányítószám')
-    irszE = tk.Entry(root)
-    tk.Label(root,text='Régió')
-    regioE = tk.Entry(root)
-    tk.Label(root, text='Orszag')
-    orszagE = tk.Entry(root)
-
     nevE.pack()
+    tk.Label(root,text='Irányítószám').pack()
+    irszE = tk.Entry(root)
     irszE.pack()
+    tk.Label(root,text='Régió').pack()
+    regioE = tk.Entry(root)
     regioE.pack()
+    tk.Label(root, text='Orszag').pack()
+    orszagE = tk.Entry(root)
     orszagE.pack()
-
 
 
     def insertCity():
@@ -190,19 +221,26 @@ def open_AddCity    ():
                 "INSERT INTO Varosok (irsz, nev, regio, orszag) VALUES (:s, :s, :s, :s)",
                 (irsz, nev, regio, orszag))
             db.commit()
-            MessageBox.showinfo("Siker", "Sikeres regisztráció!")
+            MessageBox.showinfo("Siker", "Sikeresen hozzáadva!")
+            nevE.delete(0, 'end')
+            irszE.delete(0, 'end')
+            regioE.delete(0, 'end')
+            orszagE.delete(0, 'end')
         except oracledb.Error as err:
             MessageBox.showinfo("Hiba", "Hiba történt a regisztráció során: {}".format(err))
             db.rollback()
 
         db.close()
 
+
     okAE = tk.Button(root,text='INSERT', command=insertCity)
     okAE.pack()
 
 
 
-
+def open_Menetrendek():
+    #TODO: get from Mate this
+    MessageBox.showinfo("Working on it...", "Loading....")
 
 
 
