@@ -7,6 +7,7 @@ import pandas as pd
 from tkinter import messagebox as MessageBox
 import displayData as dd
 from tkinter import *
+import display_infos
 
 
 root = tk.Tk()
@@ -172,6 +173,12 @@ def open_registration():
 
 
 def open_dolgozo():
+    for widget in root.winfo_children():
+        widget.destroy()
+    #TODO: build this method actually this is just a test
+    tk.Button(root, text="További lekérdezések", width=20, height=2, command=display_infos.display).pack(expand=True)
+
+
     pass
 
 
@@ -179,6 +186,7 @@ def open_admin_options():
     for widget in root.winfo_children():
         widget.destroy()
     #TODO: build this method actually this is just a test
+    tk.Button(root, text="Lekérdezések", width=20, height=2, command=display_infos.admin_display()).pack(expand=True)
     tk.Button(root, text="Város hozzáadása", width=20, height=2, command=addCity).pack(expand=True)
 
 
